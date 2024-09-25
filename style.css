@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#sliders-container {
+    margin-bottom: 40px;
+}
+
+.slider-group {
+    margin-bottom: 20px;
+}
+
+.slider-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.slider-group input[type="range"] {
+    width: 80%;
+}
+
+#rankings {
+    display: flex;
+    justify-content: space-between;
+}
+
+#rankings h2 {
+    text-align: center;
+}
+
+#rankings ol {
+    list-style-position: inside;
+}
