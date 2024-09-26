@@ -27,6 +27,19 @@ function fetchData() {
     });
 }
 
+// Function to get the flag URL for a given country
+async function getFlagUrl(countryName) {
+    try {
+        const response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true`);
+        const data = await response.json();
+        // Access the flag SVG URL
+        return data[0].flags.svg;
+    } catch (error) {
+        console.error(`Error fetching flag for ${countryName}:`, error);
+        return null; // Return null if there is an error
+    }
+}
+
 // Create sliders
 function createSliders() {
     const container = document.getElementById('sliders-container');
@@ -57,8 +70,8 @@ function createSliders() {
     });
 }
 
-// Calculate rankings with NaN and empty name checks
-function calculateRankings() {
+// Calculate rankings and fetch flags
+async function calculateRankings() {
     const scores = data.map(country => {
         let score = 0;
         metrics.forEach(metric => {
@@ -77,34 +90,73 @@ function calculateRankings() {
     // Sort nations based on scores
     scores.sort((a, b) => b.score - a.score);
 
-    // Get top 10 and worst 10 nations
-    const top10 = scores.slice(0, 10);
-    const worst10 = scores.slice(-10).reverse();
+    // Get top 50 and bottom 50 nations
+    const top50 = scores.slice(0, 50);
+    const bottom50 = scores.slice(-50).reverse();
 
-    displayRankings(top10, worst10);
+    // Fetch flags and display rankings
+    await displayRankingsWithFlags(top50, bottom50);
 }
 
-
-
-// Display rankings
-function displayRankings(top10, worst10) {
+// Display rankings with flags in the correct order
+async function displayRankingsWithFlags(top50, bottom50) {
     const topList = document.getElementById('top-list');
-    const worstList = document.getElementById('worst-list');
+    const bottomList = document.getElementById('worst-list');
 
     topList.innerHTML = '';
-    worstList.innerHTML = '';
+    bottomList.innerHTML = '';
 
-    top10.forEach((country, index) => {
+    // Fetch flags and add them to the top 50 list
+    for (const [index, country] of top50.entries()) {
         const listItem = document.createElement('li');
-        listItem.textContent = `${index + 1}. ${country.name}: ${country.score.toFixed(2)}`;
+        const flagUrl = await getFlagUrl(country.name);
+
+        // Create elements to display rank, flag, and name in the correct order
+        listItem.innerHTML = ''; // Clear the default numbering
+
+
+        if (flagUrl) {
+            const flagImg = document.createElement('img');
+            flagImg.src = flagUrl;
+            flagImg.alt = `${country.name} flag`;
+            flagImg.style.width = '30px';
+            flagImg.style.marginRight = '10px'; // Add some space between flag and name
+            listItem.appendChild(flagImg);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = `${country.name}: ${country.score.toFixed(2)}`;
+
+        // Append flag and name in the correct order
+        listItem.appendChild(nameSpan);
         topList.appendChild(listItem);
-    });
+    }
 
-    worst10.forEach((country, index) => {
+    // Fetch flags and add them to the bottom 50 list
+    for (const [index, country] of bottom50.entries()) {
         const listItem = document.createElement('li');
-        listItem.textContent = `${index + 1}. ${country.name}: ${country.score.toFixed(2)}`;
-        worstList.appendChild(listItem);
-    });
+        const flagUrl = await getFlagUrl(country.name);
+
+        // Create elements to display rank, flag, and name in the correct order
+        listItem.innerHTML = ''; // Clear the default numbering
+
+
+        if (flagUrl) {
+            const flagImg = document.createElement('img');
+            flagImg.src = flagUrl;
+            flagImg.alt = `${country.name} flag`;
+            flagImg.style.width = '30px';
+            flagImg.style.marginRight = '10px'; // Add some space between flag and name
+            listItem.appendChild(flagImg);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = `${country.name}: ${country.score.toFixed(2)}`;
+
+        // Append flag and name in the correct order
+        listItem.appendChild(nameSpan);
+        bottomList.appendChild(listItem);
+    }
 }
 
 // Initialize the app

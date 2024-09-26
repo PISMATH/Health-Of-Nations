@@ -26,10 +26,24 @@ body {
     justify-content: space-between;
 }
 
+#rankings ol {
+    list-style-position: inside;
+    max-height: 500px; /* Set max height for scroll */
+    overflow-y: auto; /* Allow vertical scroll */
+    padding-right: 10px; /* Space for scrollbar */
+}
+
 #rankings h2 {
     text-align: center;
 }
 
-#rankings ol {
-    list-style-position: inside;
+#rankings ol li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#rankings ol img {
+    margin-right: 10px;
+    width: 30px;
 }
