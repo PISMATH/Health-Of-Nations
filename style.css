@@ -1,12 +1,29 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
 }
 
+h1 {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 2.5em;
+    color: #333;
+}
+
+/* Increase the width of the sliders container */
 #sliders-container {
     margin-bottom: 40px;
+    max-width: 1000px; /* Increase max width */
+    width: 90%; /* Adjust width to be more flexible */
 }
 
+/* Style individual slider groups */
 .slider-group {
     margin-bottom: 20px;
 }
@@ -15,35 +32,85 @@ body {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-}
-
-.slider-group input[type="range"] {
-    width: 80%;
-}
-
-#rankings {
-    display: flex;
-    justify-content: space-between;
-}
-
-#rankings ol {
-    list-style-position: inside;
-    max-height: 500px; /* Set max height for scroll */
-    overflow-y: auto; /* Allow vertical scroll */
-    padding-right: 10px; /* Space for scrollbar */
-}
-
-#rankings h2 {
     text-align: center;
 }
 
+.slider-group input[type="range"] {
+    width: 100%;
+}
+
+/* Adjust the rankings container */
+#rankings {
+    display: flex;
+    justify-content: center; /* Center the rankings */
+    gap: 60px; /* Space between top and bottom rankings */
+    margin-bottom: 40px;
+    max-width: 1300px; /* Increase max width to align the contents */
+    width: 100%; /* Use full available width */
+    flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
+/* Make sure the ordered lists are wider */
+#rankings ol {
+    list-style-type: none; /* Remove default list style */
+    max-height: 600px; /* Set max height for scroll */
+    overflow-y: auto; /* Allow vertical scroll */
+    padding-right: 15px; /* Space for scrollbar */
+    margin: 0;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 40%; /* Adjust width to ensure they are side by side */
+    min-width: 300px; /* Prevent from becoming too narrow */
+}
+
+/* Header style for rankings */
+#rankings h2 {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Styling for each nation in the list */
 #rankings ol li {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    font-size: 1.1em;
+    justify-content: flex-start;
 }
 
+/* Styling for the numbering */
+#rankings ol li::before {
+    content: counter(item) ". "; /* Custom numbering */
+    counter-increment: item; /* Increment counter */
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+/* Styling for flag images */
 #rankings ol img {
     margin-right: 10px;
     width: 30px;
+}
+
+/* Center and reset counter for lists */
+#top-list {
+    counter-reset: item;
+}
+
+#worst-list {
+    counter-reset: item;
+}
+
+/* Make sure the container for nation boxes is aligned */
+#rankings div {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
