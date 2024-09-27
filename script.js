@@ -15,19 +15,6 @@ const metrics = [
 let data = []; // Will hold the fetched CSV data
 let weights = {};
 
-// Specify whether a metric is a positive or negative indicator
-const metricDirection = {
-    "GDP per capita": "positive",
-    "IQ average": "positive",
-    "Gini Coefficient": "negative", // Lower is better
-    "Life expectancy": "positive",
-    "HDI": "positive",
-    "Unemployment rate": "negative", // Lower is better
-    "Public debt to GDP ratio": "negative", // Lower is better
-    "CPI": "positive",
-    "Rule of Law Index": "positive",
-    "Democracy Index": "positive"
-};
 
 // Fetch and parse CSV data
 function fetchData() {
@@ -94,12 +81,10 @@ function calculateRankings() {
                 value = 0;
             }
             
-            // Adjust score based on whether the metric is positive or negative
-            if (metricDirection[metric] === "negative") {
-                value = 1 - value; // Invert value for negative indicators
-            }
-            
             score += value * weights[metric];
+            if (metric=="Democracy Index"){
+            console.log(value)}
+            
         });
 
         // Only return valid nations (non-empty names)
