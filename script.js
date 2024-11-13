@@ -15,7 +15,6 @@ const metrics = [
 let data = []; // Will hold the fetched CSV data
 let weights = {};
 
-
 // Fetch and parse CSV data
 function fetchData() {
     Papa.parse('data.csv', {
@@ -82,19 +81,17 @@ function calculateRankings() {
             }
             
             score += value * weights[metric];
-            if (metric=="Democracy Index"){
-            console.log(value)}
-            
         });
 
         // Only return valid nations (non-empty names)
-        return country["Nation Name"] ? { name: country["Nation Name"], score } : null;
+        return country["Nation Name"] ? { name: country["Nation Name"], value: score } : null;
     }).filter(Boolean); // Remove any null entries
 
     // Sort nations based on scores (descending order: highest score first)
-    scores.sort((a, b) => b.score - a.score);
+    scores.sort((a, b) => b.value - a.value);
 
     // Display the rankings
+    displayEchartsMap(scores)
     displayRankingsWithFlags(scores);
 }
 
@@ -126,7 +123,7 @@ async function displayRankingsWithFlags(scores) {
         }
 
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = `${country.name}: ${country.score.toFixed(2)}`;
+        nameSpan.textContent = `${country.name}: ${country.value.toFixed(2)}`;
 
         listItem.appendChild(nameSpan);
         topList.appendChild(listItem);
@@ -148,7 +145,7 @@ async function displayRankingsWithFlags(scores) {
         }
 
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = `${country.name}: ${country.score.toFixed(2)}`;
+        nameSpan.textContent = `${country.name}: ${country.value.toFixed(2)}`;
 
         listItem.appendChild(nameSpan);
         bottomList.appendChild(listItem);
@@ -162,63 +159,76 @@ function init() {
     document.getElementById('calculate-button').addEventListener('click', calculateRankings);
 }
 
-function testEcharts() {
-  window.onload = function() {
-    var dom = document.getElementById('chart-container');
-    var myChart = echarts.init(dom, null, {
-      renderer: 'canvas',
-      useDirtyRect: false
-    });
-    var app = {};
+function displayEchartsMap(scores) {
+  const countriesJsonPath = './data/countries.geo.json';
+  var dom = document.getElementById('map-chart-container');
+  var myChart = echarts.init(dom, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
 
-    var option;
+  // Fetch the JSON data for all countries
+  fetch(countriesJsonPath)
+    .then(response => response.json())
+    .then(countriesJson => {
+      // Hide loading if needed
+      myChart.hideLoading();
 
-    option = {
-      xAxis: {},
-      yAxis: {},
-      series: [
-        {
-          symbolSize: 20,
-          data: [
-            [10.0, 8.04],
-            [8.07, 6.95],
-            [13.0, 7.58],
-            [9.05, 8.81],
-            [11.0, 8.33],
-            [14.0, 7.66],
-            [13.4, 6.81],
-            [10.0, 6.33],
-            [14.0, 8.96],
-            [12.5, 6.82],
-            [9.15, 7.2],
-            [11.5, 7.2],
-            [3.03, 4.23],
-            [12.2, 7.83],
-            [2.02, 4.47],
-            [1.05, 3.33],
-            [4.05, 4.96],
-            [6.03, 7.24],
-            [12.0, 6.26],
-            [12.0, 8.84],
-            [7.08, 5.82],
-            [5.02, 5.68]
-          ],
-          type: 'scatter'
-        }
-      ]
-    };
+      // Register the map with ECharts and apply filters to focus on the USA
+      echarts.registerMap('world', countriesJson);
 
+      // Define data specifically for the United States states
+      const data = scores;
+      /* const data = [
+        { name: 'Philippines', value: 4822023 },
+        { id: 'AFG', value: 4822023 },
+      ]; */
 
-    if (option && typeof option === 'object') {
-      myChart.setOption(option);
-    }
+      console.log(data)
 
-    window.addEventListener('resize', myChart.resize);
-  }
+      // Sort data
+      data.sort((a, b) => a.value - b.value);
+
+      // Define map options, focusing on USA region
+      const mapOption = {
+        visualMap: {
+          left: 'right',
+          min: 0,
+          max: 10,
+          inRange: {
+            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+          },
+          text: ['High', 'Low'],
+          calculable: true
+        },
+        series: [
+          {
+            id: 'population',
+            type: 'map',
+            roam: true,
+            map: 'world',
+            emphasis: {
+              focus: 'series'
+            },
+            center: [0, 0], // Center the map on the USA
+            zoom: 1.3, // Adjust zoom to focus on USA
+            nameMap: {
+              // Map state names if needed
+              'United States': 'USA'
+            },
+            animationDurationUpdate: 1000,
+            universalTransition: true,
+            data: data
+          }
+        ]
+      };
+
+      myChart.setOption(mapOption);
+    })
+    .catch(error => console.error('Error loading the countries JSON:', error));
 }
 
   
 // Start the app by fetching the data
 fetchData();
 calculateRankings();
-testEcharts()
