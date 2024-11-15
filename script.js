@@ -190,12 +190,15 @@ fetch(countriesJsonPath)
 
     // Define data specifically for the United States states
     const data = scores;
-    /* const data = [
-      { name: 'Philippines', value: 4822023 },
-      { id: 'AFG', value: 4822023 },
-    ]; */
+    const values = scores.map(score => score.value); // Extract the values
 
-    console.log(data)
+    let minValue = 0;
+    let maxValue = 10;
+    if (values.length > 0) {
+      minValue = Math.min(...values); // Find the minimum value
+      maxValue = Math.max(...values); // Find the maximum value
+    }
+    console.log('Min:', minValue, 'Max:', maxValue);
 
     // Sort data
     data.sort((a, b) => a.value - b.value);
@@ -204,8 +207,8 @@ fetch(countriesJsonPath)
     const mapOption = {
       visualMap: {
         left: 'right',
-        min: 0.5,
-        max: 5,
+        min: minValue,
+        max: maxValue,
         inRange: {
           color: ['#ff0000', '#ffff00', '#00ff00']
         },
@@ -222,7 +225,17 @@ fetch(countriesJsonPath)
             focus: 'series'
           },
           center: [0, 0], // Center the map on the USA
-          zoom: 1.3, // Adjust zoom to focus on USA
+          zoom: 0.6, // Adjust zoom to focus on USA
+          scaleLimit: {
+              min: 0.6,
+              max: 5,
+          },
+          boundingCoords: [
+              // [lng, lat] of left-top corner
+              [-90, 45],
+              // [lng, lat] of right-bottom corner
+              [90, -45]
+          ],
           nameMap: {
             // Map state names if needed
             'United States': 'USA'
