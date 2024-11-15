@@ -107,15 +107,19 @@ async function displayRankingsWithFlags(scores) {
   const topList = document.getElementById('top-list');
   const bottomList = document.getElementById('worst-list');
 
-  // Get top 50 and bottom 50 nations
-  const top50 = scores.slice(0, 193);
-  const bottom50 = scores.slice(-50).reverse();
+  // const midIndexScores = Math.floor(scores.length / 2);
+
+  const topScores = [...scores]
+  const bottomScores = scores.reverse()
+
+  // const top50 = scores.slice(0, 193);
+  // const bottom50 = scores.slice(-50).reverse();
 
   topList.innerHTML = '';
   bottomList.innerHTML = '';
 
   // Fetch flags and add them to the top 50 list
-  for (const [index, country] of top50.entries()) {
+  for (const [index, country] of topScores.entries()) {
       const listItem = document.createElement('li');
       const flagUrl = await getFlagUrl(country.name);
 
@@ -137,7 +141,7 @@ async function displayRankingsWithFlags(scores) {
   }
 
   // Fetch flags and add them to the bottom 50 list
-  for (const [index, country] of bottom50.entries()) {
+  for (const [index, country] of bottomScores.entries()) {
       const listItem = document.createElement('li');
       const flagUrl = await getFlagUrl(country.name);
 
