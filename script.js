@@ -36,7 +36,18 @@ async function getFlagUrl(countryName) {
       if (countryName === "Côte d'Ivoire"){
         countryName = "Ivory Coast";
       }
-
+      if (countryName === "Congo"){
+        countryName = "Republic of the Congo";
+      }
+      if (countryName === "Brunei Darussalam"){
+        countryName = "Brunei";
+      }
+      if (countryName === "Viet Nam"){
+        countryName = "Vietnam";
+      }
+      if (countryName === "Cabo Verde"){
+        countryName = "Republic of Cabo Verde";
+      }
       const response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true`);
       const data = await response.json();
       return data[0].flags.svg; // Access the flag SVG URL
